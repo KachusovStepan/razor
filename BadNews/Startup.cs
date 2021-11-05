@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using Serilog;
 
 namespace BadNews
 {
@@ -32,6 +33,8 @@ namespace BadNews
         // В этом методе добавляются сервисы в DI-контейнер
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllersWithViews();
+            
             services.AddSingleton<INewsRepository, NewsRepository>();
             services.AddSingleton<INewsModelBuilder, NewsModelBuilder>();
         }
@@ -39,9 +42,22 @@ namespace BadNews
         // В этом методе конфигурируется последовательность обработки HTTP-запроса
         public void Configure(IApplicationBuilder app)
         {
-            app.UseDeveloperExceptionPage();
+            // app.UseDeveloperExceptionPage();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Errors/Exception");
+            }
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseSerilogRequestLogging();
+            
+            app.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
 
             app.Map("/news", newsApp =>
             {
@@ -59,6 +75,16 @@ namespace BadNews
             });
 
             // Остальные запросы — 404 Not Found
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute("status-code", "StatusCode/{code?}", new
+                {
+                    controller = "Errors",
+                    action = "StatusCode"
+                });
+                endpoints.MapControllerRoute("default", "{controller}/{action}");
+            });
         }
 
         // Региональные настройки, которые используются при обработке запросов новостей.
