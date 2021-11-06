@@ -49,6 +49,13 @@ namespace BadNews
             services.AddSingleton<IWeatherForecastRepository, WeatherForecastRepository>();
 
             services.Configure<OpenWeatherOptions>(configuration.GetSection("OpenWeather"));
+            
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+            });
+            
+            services.AddMemoryCache();
         }
 
         // В этом методе конфигурируется последовательность обработки HTTP-запроса
@@ -65,7 +72,19 @@ namespace BadNews
             }
             
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseResponseCompression();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse = options =>
+                {
+                    options.Context.Response.GetTypedHeaders().CacheControl =
+                        new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
+                        {
+                            Public = false,
+                            MaxAge = TimeSpan.FromDays(1),
+                        };
+                }
+            });
 
             app.UseSerilogRequestLogging();
             
