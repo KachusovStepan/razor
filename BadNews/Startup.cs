@@ -14,6 +14,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using BadNews.Validation;
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Serilog;
 
 namespace BadNews
@@ -40,6 +42,8 @@ namespace BadNews
             
             services.AddSingleton<INewsRepository, NewsRepository>();
             services.AddSingleton<INewsModelBuilder, NewsModelBuilder>();
+
+            services.AddSingleton<IValidationAttributeAdapterProvider, StopWordsAttributeAdapterProvider>();
         }
 
         // В этом методе конфигурируется последовательность обработки HTTP-запроса
@@ -61,26 +65,6 @@ namespace BadNews
             app.UseSerilogRequestLogging();
             
             app.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
-
-            // app.Map("/news", newsApp =>
-            // {
-            //     newsApp.Map("/fullarticle", fullArticleApp =>
-            //     {
-            //         fullArticleApp.Run(RenderFullArticlePage);
-            //     });
-            //
-            //     newsApp.Run(RenderIndexPage);
-            // });
-            
-            // app.Map("/news/fullarticle", fullArticleApp =>
-            // {
-            //     fullArticleApp.Run(RenderFullArticlePage);
-            // });
-
-            // app.MapWhen(context => context.Request.Path == "/", rootPathApp =>
-            // {
-            //     rootPathApp.Run(RenderIndexPage);
-            // });
 
             // Остальные запросы — 404 Not Found
             app.UseRouting();
