@@ -15,7 +15,7 @@ namespace BadNews.Controllers
         public IActionResult StatusCode(int? code)
         {
             logger.LogWarning("status-code {code} at {time}", code, DateTime.Now);
-            return View(code);
+            return View(null, code);
         }
 
         public IActionResult Exception()

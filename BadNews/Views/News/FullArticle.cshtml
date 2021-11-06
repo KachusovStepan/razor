@@ -1,0 +1,25 @@
+﻿@model BadNews.Models.News.FullArticleModel
+
+
+<main role="main" class="container">
+    <div class="row">
+        <div class="col-md-8 news-main">
+            <div class="news-article">
+                <h4 class="news-article-title">@Model.Article.Header</h4>
+                <p class="news-article-meta">
+                    @Model.Article.Date.ToString("d MMM yyyy", ViewBag.Culture)
+                </p>
+                @Html.Raw(@Model.Article.ContentHtml)
+            </div>
+        </div>
+
+        <aside class="col-md-4 news-sidebar">
+        </aside>
+    </div>
+</main>
+
+<footer class="news-footer">
+    <p>
+        <a href="#">Наверх</a>
+    </p>
+</footer>
