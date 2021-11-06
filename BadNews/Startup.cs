@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using BadNews.Repositories.Weather;
 using BadNews.Validation;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Serilog;
@@ -44,6 +45,9 @@ namespace BadNews
             services.AddSingleton<INewsModelBuilder, NewsModelBuilder>();
 
             services.AddSingleton<IValidationAttributeAdapterProvider, StopWordsAttributeAdapterProvider>();
+            services.AddSingleton<IWeatherForecastRepository, WeatherForecastRepository>();
+
+            services.Configure<OpenWeatherOptions>(configuration.GetSection("OpenWeather"));
         }
 
         // В этом методе конфигурируется последовательность обработки HTTP-запроса

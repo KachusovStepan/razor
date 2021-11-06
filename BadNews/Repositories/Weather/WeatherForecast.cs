@@ -13,7 +13,7 @@ namespace BadNews.Repositories.Weather
         {
             return new WeatherForecast
             {
-                TemperatureInCelsius = forecast.Main.Temp,
+                TemperatureInCelsius = (int)forecast.Main.Temp,
                 IconUrl = forecast.Weather.FirstOrDefault()?.IconUrl ?? defaultWeatherImageUrl
             };
         }
