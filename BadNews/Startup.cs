@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using BadNews.Elevation;
 using BadNews.Repositories.Weather;
 using BadNews.Validation;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
@@ -68,8 +69,11 @@ namespace BadNews
 
             app.UseSerilogRequestLogging();
             
+            app.UseMiddleware<ElevationMiddleware>();
+            
             app.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
 
+            
             // Остальные запросы — 404 Not Found
             app.UseRouting();
             app.UseEndpoints(endpoints =>
@@ -80,6 +84,11 @@ namespace BadNews
                     action = "StatusCode"
                 });
                 endpoints.MapControllerRoute("default", "{controller=News}/{action=Index}/{id?}");
+            });
+
+            app.MapWhen(context => context.Request.IsElevated(), branchApp =>
+            {
+                branchApp.UseDirectoryBrowser("/files");
             });
         }
 

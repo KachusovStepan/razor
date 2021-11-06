@@ -1,4 +1,5 @@
 ﻿@using System.Web
+@using BadNews.Elevation
 @model BadNews.Models.News.IndexModel
 
 
@@ -40,6 +41,7 @@
                     <p class="news-article-meta">
                         @article.Date.ToString("d MMM yyyy", ViewBag.Culture)
                     </p>
+                    
                     <p class="mb-auto">
                         @article.Teaser
                     </p>
